@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+    <!-- Breadcrumb Section Begin -->
+    <section class="breadcrumb-option">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="breadcrumb__text">
+                        <h4>Şifre Yenile</h4>
+                        <div class="breadcrumb__links">
+                            <a href="{% url 'anasayfa' %}">Anasayfa</a>
+                            <span>Şifre Yenile</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Breadcrumb Section End -->
+
+    <!-- ========================= SECTION CONTENT ========================= -->
+    <section class="section-content padding-y" style="min-height:84vh">
+
+        <!-- ============================ COMPONENT LOGIN   ================================= -->
+        <div class="card mx-auto" style="max-width: 380px; margin-top:100px;">
+            <div class="card-body">
+                <h4 class="card-title mb-4">Şifre Yenile</h4>
+                {% include 'includes/uyarilar.html' %}
+                <form action="{% url 'sifre_yenile' %}" method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <input type="password" class="form-control" placeholder="Şifreniz" name="password">
+                    </div> <!-- form-group// -->
+                    <div class="form-group">
+                        <input type="password" class="form-control" placeholder="Şifre Tekrarı" name="confirm_password">
+                    </div> <!-- form-group// -->
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-block"> Şifre Yenile  </button>
+                    </div> <!-- form-group// -->
+                </form>
+            </div> <!-- card-body.// -->
+        </div> <!-- card .// -->
+
+        <p class="text-center mt-4">Hesabınız yok mu? <a class="text-info" href="{% url 'uyeol' %}">Üye Ol</a></p>
+        <br><br>
+        <!-- ============================ COMPONENT LOGIN  END.// ================================= -->
+
+    </section>
+    <!-- ========================= SECTION CONTENT END// ========================= -->
+{% endblock %}

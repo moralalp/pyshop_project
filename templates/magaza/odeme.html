@@ -1,0 +1,218 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+    <!-- Breadcrumb Section Begin -->
+    <section class="breadcrumb-option">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="breadcrumb__text">
+                        <h4>Ödeme</h4>
+                        <div class="breadcrumb__links">
+                            <a href="{% url 'anasayfa' %}">Anasayfa</a>
+                            <a href="{% url 'sepet' %}">Sepet</a>
+                            <span>Ödeme</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Breadcrumb Section End -->
+
+    <!-- Shopping Cart Section Begin -->
+    <section class="shopping-cart spad">
+    {% include 'includes/uyarilar.html' %}
+    <form action="{% url 'siparis_ver' %}" method="post">
+        {% csrf_token %}
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Gönderim Adresi</h4>
+                        <div class="form-row">
+                            <div class="col form-group">
+                                <select name="address" class="form-control w-100">
+                                    <option value="yeni">Yeni Gönderim Adresi</option>
+                                    {% for adres in adresler %}
+                                        <option value="{{ adres.id }}">{{ adres.address_title }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <h4 class="card-title mb-4">Yeni Gönderim Adresi</h4>
+                        <div class="form-row">
+                            <div class="col form-group">
+                                <label for="">Adres Başlığı</label>
+                                <input type="text" name="address_title" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col form-group">
+                                <label for="">İsminiz</label>
+                                <input type="text" name="first_name" class="form-control">
+                            </div>
+                            <div class="col form-group">
+                                <label for="">Soyisminiz</label>
+                                <input type="text" name="last_name" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col form-group">
+                                <label for="">Email</label>
+                                <input type="email" name="email" class="form-control">
+                            </div>
+                            <div class="col form-group">
+                                <label for="">Telefon Numarası</label>
+                                <input type="text" name="phone" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col form-group">
+                                <label for="">Adres Satırı 1</label>
+                                <input type="text" name="address_line_1" class="form-control">
+                            </div>
+                            <div class="col form-group">
+                                <label for="">Adres Satırı 2</label>
+                                <input type="text" name="address_line_2" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col form-group">
+                                <label for="">İl</label>
+                                <input type="text" name="city" class="form-control">
+                            </div>
+                            <div class="col form-group">
+                                <label for="">İlçe</label>
+                                <input type="text" name="state" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col form-group">
+                                <label for="">Posta Kodu</label>
+                                <input type="text" name="post_code" class="form-control">
+                            </div>
+                            <div class="col form-group">
+                                <label for="">Ülke</label>
+                                <input type="text" name="country" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col form-group">
+                                <label for="">Notunuz</label>
+                                <textarea name="order_note" rows="3" class="form-control"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <p><h4 class="card-title mb-4">Kargo Seçenekleri</h4></p>
+                    <div class="product__details__option">
+                        <div class="product__details__option__size">
+                            {% for kargo in kargolar %}
+                                <div class="form-row">
+                                    <div class="col form-group">
+                                        <input name="kargo" value="{{ kargo.takma_kargo_adi }}" id="{{ kargo.takma_kargo_adi }}" type="radio" required="required" onclick="
+                                            {% if kargo.kapida_odeme == False and toplam >= kargo.ucretsiz_kargo_limiti %}
+                                                document.getElementById('toplam_deger').innerText = '{{ toplam }} TL'
+                                            {% else %}
+                                                document.getElementById('toplam_deger').innerText = '{{ toplam|add:kargo.eklenecek_fiyat }} TL'
+                                            {% endif %}
+                                        ">
+                                        <label for="{{ kargo.takma_kargo_adi }}">{{ kargo.kargo_adi }} +
+                                            {% if kargo.kapida_odeme == False and toplam >= kargo.ucretsiz_kargo_limiti %}
+                                                Ücretsiz Teslimat
+                                            {% else %}
+                                                {{ kargo.eklenecek_fiyat }} TL
+                                            {% endif %}
+                                            </label>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <p><h4 class="card-title mb-4">Ödeme Seçenekleri</h4></p>
+                    <div class="product__details__option">
+                        <div class="product__details__option__size">
+                            <div class="form-row">
+                                <div class="col form-group">
+                                    <input name="odeme" value="kredi" id="kredi" type="radio" required="required">
+                                    <label for="kredi">Banka/Kredi Kartı</label>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col form-group">
+                                    <input name="odeme" value="havale" id="havale" type="radio" required="required">
+                                    <label for="havale">Havale</label>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col form-group">
+                                    <input name="odeme" value="kapi" id="kapi" type="radio" required="required">
+                                    <label for="kapi">Kapıda Ödeme</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cart__total">
+                        <div class="shopping__cart__table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Ürün</th>
+                                        <th>Adet</th>
+                                        <th>Toplam</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for sepet_urunu in sepet_urunleri %}
+                                        <tr>
+                                            <td class="product__cart__item">
+                                                <div class="product__cart__item__pic">
+                                                    <img class="img-responsive" style="max-height: 50px; max-width: 50px;" src="{{ sepet_urunu.urun.urun_resmi.url }}" alt="">
+                                                </div>
+                                                <div class="product__cart__item__text">
+                                                    <h6>{{ sepet_urunu.urun.urun_adi }}</h6>
+                                                    {% if sepet_urunu.varyasyonlar.all %}
+                                                        <p class="text-muted small">
+                                                        {% for item in sepet_urunu.varyasyonlar.all %}
+                                                            {{ item.varyasyon_kategori|capfirst }} : {{ item.varyasyon_degeri|capfirst }} : {{ item.eklenecek_fiyat }} TL
+                                                            <br>
+                                                        {% endfor %}
+                                                        </p>
+                                                    {% endif %}
+                                                    {% if sepet_urunu.urun.indirimli_fiyat is not None and sepet_urunu.urun.fiyat > sepet_urunu.urun.indirimli_fiyat %}
+                                                        <h5><del>{{ sepet_urunu.urun.fiyat }} TL</del> {{ sepet_urunu.urun.indirimli_fiyat }} TL</h5>
+                                                    {% else %}
+                                                        <h5>{{ sepet_urunu.urun.fiyat }} TL</h5>
+                                                    {% endif %}
+                                                </div>
+                                            </td>
+                                            <td class="quantity__item">
+                                                <div class="quantity">
+                                                    <label for="">{{ sepet_urunu.adet }}</label>
+                                                </div>
+                                            </td>
+                                            <td class="cart__price">{{ sepet_urunu.ara_toplam }} TL</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <h6>Sepet Toplamı</h6>
+                        <ul>
+                            <li>Toplam (Kargo ve Vergiler Dahil) <span id="toplam_deger">{{ toplam }} TL</span></li>
+                        </ul>
+                        <button type="submit" name="submit" class="btn primary-btn btn-block">Ödemeyi Tamamla</button>
+                        <br>
+                        <a href="{% url 'sepet' %}" class="btn btn-light btn-block">Sepete Geri Dön</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    </section>
+    <!-- Shopping Cart Section End -->
+{% endblock %}

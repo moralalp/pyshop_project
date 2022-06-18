@@ -1,0 +1,8 @@
+{% autoescape off %}
+    Merhaba {{ kullanici.first_name }},
+
+    Lütfen üyeliğinizi aktive etmek için aşağıdaki linke tıklayınız.
+    http://{{ alan_adi }}{% url 'aktive_et' uidb64=uid token=token %}
+
+    Eğer bu mailin size yanlışlıkla gönderildiğini düşünüyorsanız, bizimle iletişime geçebilirsiniz.
+{%  endautoescape %}

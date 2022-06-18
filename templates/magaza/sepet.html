@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+    <!-- Breadcrumb Section Begin -->
+    <section class="breadcrumb-option">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="breadcrumb__text">
+                        <h4>Sepet</h4>
+                        <div class="breadcrumb__links">
+                            <a href="{% url 'anasayfa' %}">Anasayfa</a>
+                            <a href="{% url 'magaza' %}">Mağaza</a>
+                            <span>Sepet</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Breadcrumb Section End -->
+
+    <!-- Shopping Cart Section Begin -->
+    <section class="shopping-cart spad">
+    {% include 'includes/uyarilar.html' %}
+        <div class="container">
+            {% if not sepet_urunleri %}
+                <div class="text-center">
+                    <h2>Sepetinizde ürün bulunmamaktadır.</h2>
+                    <br>
+                    <div class="continue__btn">
+                        <a href="{% url 'magaza' %}">Alışverişe Devam Et</a>
+                    </div>
+                </div>
+            {% else %}
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="shopping__cart__table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Ürün</th>
+                                        <th>Adet</th>
+                                        <th>Toplam</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <form name="sepeti_guncelle" action="{% url 'sepeti_guncelle' %}" method="post">
+                                        {% csrf_token %}
+                                        {% for sepet_urunu in sepet_urunleri %}
+                                            <tr>
+                                                <td class="product__cart__item">
+                                                    <div class="product__cart__item__pic">
+                                                        <img class="img-responsive" style="max-height: 150px; max-width: 150px;" src="{{ sepet_urunu.urun.urun_resmi.url }}" alt="">
+                                                    </div>
+                                                    <div class="product__cart__item__text">
+                                                        <h6>{{ sepet_urunu.urun.urun_adi }}</h6>
+                                                        {% if sepet_urunu.varyasyonlar.all %}
+                                                            <p class="text-muted small">
+                                                            {% for item in sepet_urunu.varyasyonlar.all %}
+                                                                {{ item.varyasyon_kategori|capfirst }} : {{ item.varyasyon_degeri|capfirst }} : {{ item.eklenecek_fiyat }} TL
+                                                                <br>
+                                                            {% endfor %}
+                                                            </p>
+                                                        {% endif %}
+                                                        {% if sepet_urunu.urun.indirimli_fiyat is not None and sepet_urunu.urun.fiyat > sepet_urunu.urun.indirimli_fiyat %}
+                                                            <h5><del>{{ sepet_urunu.urun.fiyat }} TL</del> {{ sepet_urunu.urun.indirimli_fiyat }} TL</h5>
+                                                        {% else %}
+                                                            <h5>{{ sepet_urunu.urun.fiyat }} TL</h5>
+                                                        {% endif %}
+                                                    </div>
+                                                </td>
+                                                <td class="quantity__item">
+                                                        <div class="quantity">
+                                                            <div class="pro-qty-2">
+                                                                <input name="{{ sepet_urunu.id }}" type="number" value="{{ sepet_urunu.adet }}" readonly>
+                                                            </div>
+                                                        </div>
+                                                </td>
+                                                <td class="cart__price">{{ sepet_urunu.ara_toplam }} TL</td>
+                                                <td class="cart__close"><a href="{% url 'sepetten_sil' sepet_urunu.id %}"><i class="fa fa-close"></i></a></td>
+                                            </tr>
+                                        {% endfor %}
+                                    </form>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                <div class="continue__btn">
+                                    <a href="{% url 'magaza' %}">Alışverişe Devam Et</a>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                <div class="continue__btn update__btn">
+                                    <a href="#" onclick="document.forms['sepeti_guncelle'].submit();"><i class="fa fa-spinner"></i>Sepeti Güncelle</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="cart__discount">
+                            <h6>İndirim Kuponları</h6>
+                            <form action="#">
+                                <input type="text" placeholder="Kupon Kodu">
+                                <button type="submit">Uygula</button>
+                            </form>
+                        </div>
+                        <div class="cart__total">
+                            <h6>Sepet Toplamı</h6>
+                            <ul>
+                                <li>Toplam <span>{{ toplam }} TL</span></li>
+                            </ul>
+                            <a href="{% url 'odeme' %}" class="primary-btn">Ödemeye Git</a>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+    <!-- Shopping Cart Section End -->
+{% endblock %}

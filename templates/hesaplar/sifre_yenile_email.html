@@ -1,0 +1,8 @@
+{% autoescape off %}
+    Merhaba {{ kullanici.first_name }},
+
+    Lütfen şifrenizi yenilemek için aşağıdaki linke tıklayınız.
+    http://{{ alan_adi }}{% url 'sifremi_unuttum_onayla' uidb64=uid token=token %}
+
+    Eğer bu mailin size yanlışlıkla gönderildiğini düşünüyorsanız, bizimle iletişime geçebilirsiniz.
+{%  endautoescape %}
